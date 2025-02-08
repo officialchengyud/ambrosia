@@ -4,8 +4,31 @@ import { HelloWave } from "@/components/HelloWave";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { db } from "@/firebaseConfig";  // Import Firestore
+import { collection, doc, getDoc } from "firebase/firestore";
+
+
+
 
 export default function HomeScreen() {
+  const getUserDiet = async (userId:  any) => {
+    try {
+      const userDoc = await getDoc(doc(db, "users", userId));
+      if (userDoc.exists()) {
+        console.log("User diet:", userDoc.data());
+        return userDoc.data().diet;
+      } else {
+        console.log("❌ No user diet found.");
+        return null;
+      }
+    } catch (error) {
+      console.error("❌ Error fetching diet:", error);
+    }
+  };
+  
+  // Example usage:
+  getUserDiet("user123");
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
