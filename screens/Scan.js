@@ -1,84 +1,105 @@
 import { useState } from "react";
-import { View, Text, Button, StyleSheet, Alert } from "react-native";
+import { View, Text, Button, StyleSheet, ScrollView } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
 
-function ScanScreen() {
+export default function ScanScreen() {
   const [permission, requestPermission] = useCameraPermissions();
   const [scannedBarcode, setScannedBarcode] = useState(null);
+  const [isScanning, setIsScanning] = useState(true);
+  const [productInfo, setProductInfo] = useState(null);
 
-  // Request permissions if not granted
   if (!permission) {
-    return (
-      <View style={styles.container}>
-        <Text>Loading permissions...</Text>
-      </View>
-    );
+    return <View style={styles.container}><Text>Loading permissions</Text></View>;
   }
 
   if (!permission.granted) {
     return (
       <View style={styles.container}>
-        <Text style={styles.message}>
-          We need your permission to access the camera
-        </Text>
-        <Button onPress={requestPermission} title="Grant Permission" />
+        <Text>Camera access is required</Text>
+        <Button onPress={requestPermission} title="Grant Access" />
       </View>
     );
   }
 
-  // Function to handle barcode scanning
   const handleBarcodeScanned = async ({ data }) => {
+    if (!isScanning) return;
+    setIsScanning(false);
     setScannedBarcode(data);
-    Alert.alert("Barcode Captured", `Scanned Barcode: ${data}`);
 
     try {
-      const response = await fetch(
-        `https://world.openfoodfacts.org/api/v0/product/${data}.json`
-      );
+      const response = await fetch(`https://world.openfoodfacts.org/api/v0/product/${data}.json`);
       const foodData = await response.json();
 
       if (foodData.status === 1) {
-        Alert.alert(
-          "Product Found",
-          `Name: ${foodData.product.product_name}\nCalories: ${
-            foodData.product.nutriments?.["energy-kcal_100g"] || "N/A"
-          } kcal per 100g`
-        );
+        const product = foodData.product;
+        const servingSize = product.serving_size || "N/A";
+
+        const nutriments = product.nutriments || {};
+        const wantedNutrients = [
+          "carbohydrates", "cholesterol", "energy-kcal", "fat", "fiber",
+          "proteins", "salt", "saturated-fat", "sodium", "sugars"
+        ];
+
+        let nutritionInfo = `Serving Size: ${servingSize}\n`;
+
+        wantedNutrients.forEach(nutrient => {
+          let perValue = nutriments[`${nutrient}_value`];
+          let perUnit = nutriments[`${nutrient}_unit`] || "";
+
+          if (perValue === undefined) {
+            perValue = "N/A";
+          } else if (perValue === 0) {
+            perValue = "0";
+          }
+
+          const nutrientName = nutrient.replace(/-/g, " ").toUpperCase();
+          nutritionInfo += `${nutrientName}: ${perValue} ${perUnit}\n`;
+        });
+
+        const ingredients = product.ingredients_text
+          ? product.ingredients_text
+              .split(",")
+              .map(item => `- ${item.trim()}`)
+              .join("\n")
+          : "Ingredients not available";
+
+        setProductInfo({ name: product.product_name, ingredients, nutritionInfo });
       } else {
-        Alert.alert(
-          "Not Found",
-          "Product not found in Open Food Facts database."
-        );
+        setProductInfo({ name: "Not Found", ingredients: "N/A", nutritionInfo: "N/A" });
       }
     } catch (error) {
-      Alert.alert("Error", "Failed to fetch food data.");
-      console.error("Error fetching food data:", error);
+      setProductInfo({ name: "Error", ingredients: "N/A", nutritionInfo: "N/A" });
     }
   };
 
   return (
     <View style={styles.container}>
-      <CameraView
-        style={styles.camera}
-        facing="back"
-        barcodeScannerSettings={{
-          barcodeTypes: ["qr", "ean13", "upc_a", "code128"],
-        }}
-        onBarcodeScanned={handleBarcodeScanned}
-      />
-      {scannedBarcode && (
-        <View style={styles.resultContainer}>
-          <Text style={styles.resultText}>
-            Scanned Barcode: {scannedBarcode}
-          </Text>
-          <Button title="Scan Again" onPress={() => setScannedBarcode(null)} />
-        </View>
+      {isScanning && (
+        <Text style={styles.scanningMessage}>Scan a barcode</Text>
+      )}
+
+      {isScanning && (
+        <CameraView
+          style={styles.camera}
+          facing="back"
+          barcodeScannerSettings={{ barcodeTypes: ["qr", "ean13", "upc_a", "code128"] }}
+          onBarcodeScanned={handleBarcodeScanned}
+        />
+      )}
+
+      {scannedBarcode && productInfo && (
+        <ScrollView style={styles.resultContainer}>
+          <Text style={styles.resultText}>Product Name: {productInfo.name || "Unknown"}</Text>
+          <Text style={styles.sectionTitle}>Ingredients</Text>
+          <Text style={styles.resultText}>{productInfo.ingredients}</Text>
+          <Text style={styles.sectionTitle}>Nutritional Information</Text>
+          <Text style={styles.resultText}>{productInfo.nutritionInfo}</Text>
+          <Button title="Scan Again" onPress={() => { setScannedBarcode(null); setProductInfo(null); setIsScanning(true); }} />
+        </ScrollView>
       )}
     </View>
   );
 }
-
-export default ScanScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -87,25 +108,38 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "black",
   },
-  message: {
+  scanningMessage: {
+    position: "absolute",
+    top: 50,
     color: "white",
-    fontSize: 18,
+    fontSize: 16,
     textAlign: "center",
+    padding: 10,
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    borderRadius: 10,
   },
   camera: {
     flex: 1,
     width: "100%",
   },
   resultContainer: {
-    position: "absolute",
-    bottom: 50,
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
-    padding: 10,
-    borderRadius: 10,
+    flex: 1,
+    padding: 20,
+    backgroundColor: "white",
+    width: "100%",
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
   },
   resultText: {
-    color: "white",
+    color: "black",
+    fontSize: 14,
+    textAlign: "left",
+    marginBottom: 5,
+  },
+  sectionTitle: {
     fontSize: 16,
-    textAlign: "center",
+    fontWeight: "bold",
+    color: "black",
+    marginTop: 10,
   },
 });
