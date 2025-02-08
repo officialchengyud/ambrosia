@@ -32,6 +32,14 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow Ambrosia to access your camera",
+          "microphonePermission": "Allow Ambrosia to access your microphone",
+          "recordAudioAndroid": false
+        }
       ]
     ],
     "experiments": {
