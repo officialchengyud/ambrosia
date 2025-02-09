@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { onAuthStateChanged, auth } from "../firebaseConfig";
-import { getUserFromDb } from "../api/user";
+import { getUserFromDB, getUserFromDb } from "../api/user";
 
 // Create Context
 const UserContext = createContext();
@@ -21,9 +21,9 @@ export const UserProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    console.log("emaail", user);
+    console.log("email", user);
     if (user?.email) {
-      getUserFromDb(user.email).then((data) => {
+      getUserFromDB(user.email).then((data) => {
         setUserData(data);
       });
     }

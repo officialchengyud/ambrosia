@@ -25,14 +25,6 @@ export const addUserToDB = async (userData, email) => {
         console.error("Error saving user data:", error);
         return false;
     }
-  try {
-    console.log("Attempign to save", userData);
-    const user = await setDoc(doc(db, "users", email), userData);
-    console.log("User data successfully saved!", user);
-    return true;
-  } catch (error) {
-    console.error("Error saving user data:", error);
-  }
   // firestore()
   //   .collection("users")
   //   .doc(email)
@@ -76,7 +68,7 @@ export const getUserFromDB = async (email) => {
           name: userData.name || "",
           age: userData.age || "",
           gender: userData.gender || "",
-          dietary_restrictions: userData.dietary_restrictions || "",
+          diet: userData.dietary_restrictions || "",
           pantry: pantry || [], // Pantry is now a list of maps with barcode_id as key
           past_foods: userData.past_foods || {},
         };
