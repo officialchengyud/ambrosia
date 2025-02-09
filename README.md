@@ -6,6 +6,8 @@
         <br />
         <a href="https://devpost.com/software/ambrosia-ey1j3h">Devpost</a>
         ·
+        <a href="https://www.youtube.com/watch?v=MxoAzoFSqAo">Demo Video</a>
+        ·
         <a href="https://github.com/officialchengyud/ambrosia/issues">Report Bug</a>
         ·
         <a href="https://github.com/officialchengyud/ambrosia/issues">Request Feature</a>
@@ -13,7 +15,8 @@
 </div>
 
 <div align="center">
-<img src="https://github.com/user-attachments/assets/a764a92c-0aeb-4141-9833-3086476ffa2d" width="200">
+<img src="https://github.com/user-attachments/assets/2c3912b2-e580-4899-9664-801350c43e1f" width="230">
+
 </div>
 
 ## Inspiration
