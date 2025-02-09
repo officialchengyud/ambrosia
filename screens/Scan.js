@@ -1,15 +1,23 @@
 import { useState, useRef } from "react";
-import { View, Text, StyleSheet, SafeAreaView } from "react-native";
-import { TopNavigation, Button, List, ListItem } from "@ui-kitten/components";
+import { View, StyleSheet, SafeAreaView } from "react-native";
+import {
+  TopNavigation,
+  Button,
+  List,
+  ListItem,
+  Spinner,
+  Text,
+} from "@ui-kitten/components";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { useUser } from "../contexts/UserContext";
 import OpenAI from "openai";
 import { ScrollView } from "react-native-gesture-handler";
 
-const data = new Array(8).fill({
-  title: "Title for Item",
-  description: "Description for Item",
-});
+function snakeCaseToWords(snakeCaseString) {
+  return snakeCaseString
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (match) => match.toUpperCase());
+}
 
 export default function ScanScreen() {
   const { user, userData, setUser } = useUser();
@@ -185,45 +193,77 @@ export default function ScanScreen() {
     console.log("Item", item);
     return (
       <ListItem
-        title={`${item.filter} ${index + 1}`}
-        description={`${item.reason} ${index + 1}`}
+        title={`${snakeCaseToWords(item.filter)}`}
+        description={`${item.reason}`}
         accessoryRight={item.is_safe ? safe : notSafe}
       />
     );
   };
 
   console.log("gpt", JSON.stringify(gptOutput));
+
+  const ScanComplete = () => {
+    return (
+      <>
+        <Text style={styles.subHeading} category="h6">
+          Findings:
+        </Text>
+        {gptOutput.filters_analysis.map((filter) => {
+          return (
+            <ListItem
+              key={filter.filter}
+              style={styles.listItem}
+              title={`${snakeCaseToWords(filter.filter)}`}
+              description={`${filter.reason}`}
+              accessoryRight={filter.is_safe ? safe : notSafe}
+            />
+          );
+        })}
+        <Text style={styles.subHeading} category="h6">
+          Pros:
+        </Text>
+        <Text>{gptOutput.general_health_evaluation.pros.join(" ")}</Text>
+        <Text style={styles.subHeading} category="h6">
+          Cons:
+        </Text>
+        <Text>{gptOutput.general_health_evaluation.cons.join(" ")}</Text>
+      </>
+    );
+  };
+
+  const resetScan = () => {
+    setIsScanning(true);
+    setGptOutput([]);
+  };
+
   return (
     <SafeAreaView style={{ height: "100%", backgroundColor: "white" }}>
       {!isScanning && <TopNavigation title="Home" alignment="center" />}
-      <View style={styles.container}>
-        {isScanning && <Text>Scan a barcode</Text>}
+      {isScanning && <Text>Scan a barcode</Text>}
+      {isScanning && (
+        <CameraView
+          style={styles.camera}
+          facing="back"
+          onBarcodeScanned={handleBarcodeScanned}
+        />
+      )}
+      {!isScanning && (
+        <ScrollView style={styles.container}>
+          {productData && (
+            <Text category="h5">Product: {productData.product_name}</Text>
+          )}
+          {gptOutput.length === 0 && <Spinner size="giant" />}
+          {gptOutput && gptOutput.filters_analysis && !isScanning && (
+            <ScanComplete />
+          )}
 
-        {isScanning && (
-          <CameraView
-            style={styles.camera}
-            facing="back"
-            onBarcodeScanned={handleBarcodeScanned}
-          />
-        )}
-
-        {gptOutput && gptOutput.filters_analysis && (
-          <List
-            style={styles.container}
-            data={gptOutput.filters_analysis}
-            renderItem={renderItem}
-          />
-        )}
-
-        {!isScanning && (
-          <Button onPress={() => setIsScanning(true)}>Scan Again</Button>
-        )}
-        {productData && (
-          <Text style={styles.resultText}>
-            Product: {productData.product_name}
-          </Text>
-        )}
-      </View>
+          {!isScanning && (
+            <Button style={styles.scanAgainBtn} onPress={resetScan}>
+              Scan Again
+            </Button>
+          )}
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 }
@@ -231,9 +271,16 @@ export default function ScanScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingLeft: 10,
     // justifyContent: "center",
     // alignItems: "center",
     // backgroundColor: "black",
+  },
+  listItem: {
+    marginLeft: -15,
+  },
+  subHeading: {
+    marginTop: 15,
   },
   camera: {
     flex: 1,
@@ -243,5 +290,8 @@ const styles = StyleSheet.create({
     // color: "white",
     fontSize: 16,
     marginTop: 10,
+  },
+  scanAgainBtn: {
+    marginTop: 20,
   },
 });
