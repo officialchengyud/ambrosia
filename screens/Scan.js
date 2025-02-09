@@ -23,7 +23,7 @@ function snakeCaseToWords(snakeCaseString) {
 
 export default function ScanScreen({ route }) {
   const navigation = useNavigation();
-  const { user, userData, setUser } = useUser();
+  const { user, userData, refetchUserData } = useUser();
   const [permission, requestPermission] = useCameraPermissions();
   const [prevBarcode, setPrevBarcode] = useState("");
   const [isScanning, setIsScanning] = useState(true);
@@ -208,6 +208,7 @@ export default function ScanScreen({ route }) {
         product_name: productInfo.product_name,
         openai_response: JSON.parse(output),
       });
+      refetchUserData();
       console.log(output);
       return output;
     } catch (error) {

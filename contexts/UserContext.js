@@ -29,9 +29,15 @@ export const UserProvider = ({ children }) => {
     }
   }, [user]);
 
+  function refetchUserData() {
+    getUserFromDB(user.email).then((data) => {
+      setUserData(data);
+    });
+  }
+
   return (
     <UserContext.Provider
-      value={{ user, loading, setUser, userData, setUserData }}
+      value={{ user, loading, setUser, userData, setUserData, refetchUserData }}
     >
       {!loading && children}
     </UserContext.Provider>
