@@ -39,12 +39,12 @@ const SignUpScreen = ({ navigation }) => {
     const userData = {
       name,
       gender,
-      diet: selectedDiet,
+      dietary_restrictions: selectedDiet,
       allergies: selectedAllergies.join(","),
       age,
     };
 
-    console.log(userData)
+    console.log(userData);
 
     const user = await registerUser(email, password);
 
