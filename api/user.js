@@ -10,7 +10,7 @@ export const addUserToDB = async (userData, email) => {
       name: userData.name || "",
       age: userData.age || "",
       gender: userData.gender?.toLowerCase() || "",
-      dietary_restrictions: userData.diet || "",
+      dietary_restrictions: userData.dietary_restrictions || "",
       allergies: userData.allergies,
       pantry: [],
       past_foods: [],
