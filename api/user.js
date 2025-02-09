@@ -112,7 +112,7 @@ export const addPastFood = async (email, foodItem) => {
       .collection("users")
       .doc(email)
       .update({
-        [`past_foods.${foodItem.name}`]: foodItem.openai_response,
+        [`past_foods.${foodItem.barcodeID}`]: foodItem.openai_response,
       });
     console.log("Food item added to past foods:", foodItem.name);
   } catch (error) {
