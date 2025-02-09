@@ -5,6 +5,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import HomeScreen from "./screens/Home";
 import ScanScreen from "./screens/Scan";
+import ScanScreen1 from "./screens/image-capture";
 import LoginScreen from "./screens/Login";
 import { UserProvider } from "./contexts/UserContext"; // Import the UserProvider
 import SignUpScreen from "./screens/SignUp";
@@ -21,6 +22,7 @@ export default () => (
           <Screen name="Login" component={LoginScreen} />
           <Screen name="Home" component={HomeScreen} />
           <Screen name="Scan" component={ScanScreen} />
+          <Screen name="Scan1" component={ScanScreen1} />
           <Screen name="SignUp" component={SignUpScreen} />
         </Navigator>
       </NavigationContainer>

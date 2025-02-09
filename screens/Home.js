@@ -52,6 +52,13 @@ const HomeScreen = ({ navigation }) => {
             Scan Food
           </Button>
 
+          <Button
+            style={styles.scanButton}
+            onPress={() => navigation.navigate("Scan1", { foodItem: null })}
+          >
+            Scan Food Photo
+          </Button>
+
           <Text category="h4">History</Text>
           {userData &&
             Object.values(userData.past_foods).map((pastFood) => {
