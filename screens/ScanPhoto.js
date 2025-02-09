@@ -74,15 +74,12 @@ export default function ScanPhoto({ route }) {
             Allergies: ${allergies}
             You are a dietitian and food health expert who has been provided with the dietary restrictions and allergies of a person as listed above. You 
             will also be provided an image of a food item that you need to evaluate. You must identify the food item and provide its name, then its ingredients 
-            (if any), and the nutritional information of the item per individual recommended serving size. Considering all of this information, 
-            you are tasked with evaluating these food items purely from a dietary perspective and consider how healthy they would be for regular consumption 
-            by a human. Furthermore, consider each of the filters provided to you which state the dietary restrictions
-            and food allergies of the person consuming this food item. If the food item is safe for consumption by this individual, return a positive evaluation,
-            otherwise return a negative evaluation under filters analysis if the item is not safe to consume. Make sure to provide the reason by and 
-            highlight which specific ingredient or nutrient is the reason for the given evaluation. After analysing the filters, list the general pros and cons
-            of the food item as you considered from a dietitian's perspective, making sure to keep each pro and con concise, relevant, impactful, significant,
-            and meaningful. Each pro and con should be one sentence, respectively. Only list pros and cons which are relevant to the food item's health impact.
-             If the image is not of a food item, set the product name to "None" and do not provide anything else in the output.
+            (if any), and the nutritional information of the item per individual recommended serving size. Considering this information and both, the dietary
+            restrictions of the person and their allergies, you must evaluate whether this item is safe for consumption or not. If it is safe, provide a positive
+            evaluation under filters_analysis, otherwise provide a negative evaluation. Make sure to provide the reason and highlight which specific ingredient is
+            the reason for said evaluation. After analysing the filters, list the general pros and cons of the food item as considered from a dietitian's 
+            perspective towards the impact of the food item on human health, making sure to keep each pro and con concise, relevant, impactful, significant, 
+            and meaningful. If the image is not of a food item, set the product name to "None" and do not provide anything else in the output.
 
             ### Response Format:
             Return a JSON object with the following structure:

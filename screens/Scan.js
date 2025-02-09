@@ -166,12 +166,11 @@ export default function ScanScreen({ route }) {
           2. Nutritional information about a good item as well as a list of the ingredients present in that food item. 
 
           You are a dietitian and food health expert whose job it is to evaluate these food items purely from a dietary perspective and consider how 
-          healthy they would be for regular consumption by a human. Furthermore, consider the filters provided to you which state the dietary restrictions
-          and food allergies of the person consuming this food item. If the food item is safe for consumption by this individual, return a positive evaluation,
-          otherwise return a negative evaluation under filters analysis if the item is not safe to consume. Make sure to provide the reason by and 
-          highlight which specific ingredient or nutrient is the reason for the given evaluation. After analysing the filters, list the general pros and cons
-          of the food item as you considered from a dietitian's perspective, making sure to keep each pro and con concise, relevant, impactful, significant,
-          and meaningful.
+          healthy they would be for regular consumption by a human. Furthermore, consider both the dietary restrictions and allergies of the person consuming
+          this food item to determine whether it is suitable for their consumption. For each restriction or allergy they have, return a positive or negative 
+          evaluation based on the food item's ingredients and nutritional information. Make sure to provide the reason for your evaluation and highlight which 
+          ingredient is reponsible for the evaluation. After analysing the filters, list the general pros and cons of the food item as you considered 
+          from a dietitian's perspective, making sure to keep each pro and con concise, relevant, impactful, significant, and meaningful.
 
           ### Response Format:
           Return a JSON object structured as:
