@@ -1,9 +1,11 @@
 import { useState, useRef } from "react";
 import { View, Text, Button, StyleSheet } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
+import { useUser } from "../contexts/UserContext";
 import OpenAI from "openai";  
 
 export default function ScanScreen() {
+  const { user, userData, setUser } = useUser();
   const [permission, requestPermission] = useCameraPermissions();
   const [prevBarcode, setPrevBarcode] = useState('');
   const [isScanning, setIsScanning] = useState(true);
@@ -90,10 +92,11 @@ export default function ScanScreen() {
     }
   };
 
-
+  const dietRestrictions = userData.diet
+  const allergies = userData.allergies
   const openai = new OpenAI({ apiKey: `${process.env.EXPO_PUBLIC_OPENAI_API_KEY}` });  
 
-  const openaiBarcodeAnalysis = async (productInfo) => {
+  const openaiBarcodeAnalysis = async (productInfo, dietRestrictions) => {
     try {
       const completion = await openai.chat.completions.create({
         model: "gpt-4o-mini",
@@ -101,11 +104,17 @@ export default function ScanScreen() {
           {
             role: "system",
             content: `
-          You will receive two things: 
-          1. A list of filters. 
-          2. Information regarding a food item. 
+          You will receive 2 things: 
+          1. A list of dietary restrictions and allergies filters that a person has.
+          2. Nutritional information about a good item as well as a list of the ingredients present in that food item. 
 
-          Your job is to apply the filters to the food item and return whether or not this food item is safe for consumption for a person with those filters. 
+          You are a dietitian and food health expert whose job it is to evaluate these food items purely from a dietary perspective and consider how 
+          healthy they would be for regular consumption by a human. Furthermore, consider the filters provided to you which state the dietary restrictions
+          and food allergies of the person consuming this food item. If the food item is safe for consumption by this individual, return a positive evaluation,
+          otherwise return a negative evaluation under filters analysis if the item is not safe to consume. Make sure to provide the reason by and 
+          highlight which specific ingredient or nutrient is the reason for the given evaluation. After analysing the filters, list the general pros and cons
+          of the food item as you considered from a dietitian's perspective, making sure to keep each pro and con concise, relevant, impactful, significant,
+          and meaningful.
 
           ### Response Format:
           Return a JSON object structured as:
@@ -124,12 +133,12 @@ export default function ScanScreen() {
             }
           }
 
-          If no filters are provided, return a general evaluation of the food item's health impact.
+          If no filters are provided, return a general evaluation of the food item's health impact as outlined above.
           `,
           },
           {
             role: "user",
-            content: JSON.stringify(productInfo),
+            content: `dietary restrictions: ${dietRestrictions} \n allergies: ${allergies} \n${JSON.stringify(productInfo)}`,
           },
         ],
         response_format: {type: "json_object"}
