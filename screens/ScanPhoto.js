@@ -74,9 +74,9 @@ export default function ScanPhoto({ route }) {
             Allergies: ${allergies}
             You are a dietitian and food health expert who has been provided with the dietary restrictions and allergies of a person as listed above. You 
             will also be provided an image of a food item that you need to evaluate. You must identify the food item and provide its name in the product name
-            portion of your output. Considering the item's ingredients and nutritional information per recommended serving size, take into account both, 
-            the dietary restrictions of the person and their allergies, then evaluate whether this item is safe for consumption or not. If it is safe, provide a positive
-            evaluation under filters_analysis, otherwise provide a negative evaluation. Make sure to provide the reason and highlight which specific ingredient is
+            portion of your output. for each of the person's dietary restrictions and allergies, consider the item's ingredients and nutritional information per
+            recommended serving size to provide a positive or negative evaluation as to whether the item is safe to consume or not. Make sure to provide the 
+            reason and highlight which specific ingredient is
             the reason for said evaluation. After analysing the filters, list the general pros and cons of the food item as considered from a dietitian's 
             perspective towards the impact of the food item on human health, making sure to keep each pro and con concise, relevant, impactful, significant, 
             and meaningful. If the image is not of a food item, set the product name to "None" and do not provide anything else in the output.
