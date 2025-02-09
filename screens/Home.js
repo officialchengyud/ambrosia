@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { SafeAreaView, ScrollView } from "react-native";
 import {
   Button,
@@ -23,15 +23,12 @@ const data = new Array(20).fill({
 
 const HomeScreen = ({ navigation }) => {
   const { user, userData, setUser } = useUser();
-  const [selectedIndex, setSelectedIndex] = React.useState(0);
 
-  const navigateDetails = () => {
-    navigation.navigate("Details");
-  };
+  useEffect(() => {
+    console.log(userData);
+  }, []);
 
   const renderItemAccessory = () => <Button size="tiny">Delete</Button>;
-
-  const renderItemIcon = (props) => <Icon {...props} name="person" />;
 
   const renderItem = ({ item, index }) => (
     <ListItem
@@ -45,26 +42,42 @@ const HomeScreen = ({ navigation }) => {
     <SafeAreaView style={{ height: "100%", backgroundColor: "white" }}>
       <TopNavigation title="Home" alignment="center" />
       <Divider />
-      <Layout style={{ padding: 20 }}>
-        {userData && <Text category="h4">Hello, {userData.name}!</Text>}
-        <Button
-          style={styles.scanButton}
-          onPress={() => navigation.navigate("Scan")}
-        >
-          Scan Food
-        </Button>
+      <ScrollView>
+        <Layout style={{ padding: 20 }}>
+          {userData && <Text category="h4">Hello, {userData.name}!</Text>}
+          <Button
+            style={styles.scanButton}
+            onPress={() => navigation.navigate("Scan")}
+          >
+            Scan Food
+          </Button>
 
-        <Text category="h4">History</Text>
-        <List style={styles.container} data={data} renderItem={renderItem} />
-        <Button
-          onPress={() => {
-            logoutUser();
-            navigation.navigate("Login");
-          }}
-        >
-          Logout
-        </Button>
-      </Layout>
+          <Text category="h4">History</Text>
+          {userData &&
+            Object.values(userData.past_foods).map((pastFood) => {
+              return (
+                <ListItem
+                  key={pastFood.product_name}
+                  title={`${pastFood.product_name} `}
+                  style={styles.listItem}
+                  onPress={() =>
+                    navigation.navigate("Scan", { foodItem: pastFood })
+                  }
+                />
+              );
+            })}
+          <Button
+            style={styles.logoutBtn}
+            appearance="ghost"
+            onPress={() => {
+              logoutUser();
+              navigation.navigate("Login");
+            }}
+          >
+            Logout
+          </Button>
+        </Layout>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -77,6 +90,12 @@ const styles = StyleSheet.create({
   scanButton: {
     marginTop: 20,
     marginBottom: 20,
+  },
+  listItem: {
+    marginLeft: -15,
+  },
+  logoutBtn: {
+    marginTop: 20,
   },
 });
 

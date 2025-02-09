@@ -1,5 +1,6 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { View, StyleSheet, SafeAreaView } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import {
   TopNavigation,
   Button,
@@ -20,13 +21,23 @@ function snakeCaseToWords(snakeCaseString) {
     .replace(/\b\w/g, (match) => match.toUpperCase());
 }
 
-export default function ScanScreen() {
+export default function ScanScreen({ route }) {
+  const navigation = useNavigation();
   const { user, userData, setUser } = useUser();
   const [permission, requestPermission] = useCameraPermissions();
   const [prevBarcode, setPrevBarcode] = useState("");
   const [isScanning, setIsScanning] = useState(true);
   const [productData, setProductData] = useState(null); // Store product data
   const [gptOutput, setGptOutput] = useState([]);
+  const { foodItem } = route.params;
+
+  useEffect(() => {
+    if (foodItem) {
+      setProductData({ product_name: foodItem.product_name });
+      setIsScanning(false);
+      setGptOutput(foodItem);
+    }
+  }, [foodItem]);
 
   // Refs to prevent the function running twice because these update syncronously
   const prevBarcodeRef = useRef("");
