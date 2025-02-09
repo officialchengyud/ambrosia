@@ -55,8 +55,8 @@ const LoginScreen = ({ navigation }) => {
           <View style={{ width: "90%", marginTop: 20, marginBottom: 20 }}>
             <Input
               style={styles.input}
-              label="Username"
-              placeholder="Enter your username"
+              label="Email"
+              placeholder="Enter your email"
               value={username}
               onChangeText={(username) => setUsername(username)}
             />

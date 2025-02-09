@@ -137,6 +137,7 @@ export default function ScanScreen({ route }) {
         // OpenAI function call
         openaiBarcodeAnalysis(productInfo);
       } else {
+        setIsScanning(true);
         console.log("Product not found.");
       }
     } catch (error) {
@@ -275,9 +276,20 @@ export default function ScanScreen({ route }) {
           )}
 
           {!isScanning && (
-            <Button style={styles.scanAgainBtn} onPress={resetScan}>
-              Scan Again
-            </Button>
+            <>
+              <Button style={styles.scanAgainBtn} onPress={resetScan}>
+                Scan Again
+              </Button>
+              <Button
+                style={styles.logoutBtn}
+                appearance="ghost"
+                onPress={() => {
+                  navigation.navigate("Home");
+                }}
+              >
+                Back
+              </Button>
+            </>
           )}
         </ScrollView>
       )}

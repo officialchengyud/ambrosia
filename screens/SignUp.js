@@ -42,6 +42,7 @@ const SignUpScreen = ({ navigation }) => {
       dietary_restrictions: selectedDiet,
       allergies: selectedAllergies.join(","),
       age,
+      past_foods: [],
     };
 
     console.log(userData);
@@ -58,7 +59,9 @@ const SignUpScreen = ({ navigation }) => {
   };
 
   const buttons = [
-    { label: "Vegetarian", value: "vegetarian" },
+    { label: "Lacto-Vegetarian", value: "lacto_vegetarian" },
+    { label: "Ovo-Vegetarian", value: "ovo_vegetarian" },
+    { label: "Lacto-Ovo Vegetarian", value: "lacto_ovo_vegetarian" },
     { label: "Vegan", value: "vegan" },
     { label: "Pescatarian", value: "pescatarian" },
     { label: "Keto", value: "keto" },
@@ -71,7 +74,6 @@ const SignUpScreen = ({ navigation }) => {
     { label: "Dairy-Free", value: "dairy_free" },
     { label: "Nut-Free", value: "nut_free" },
     { label: "Soy-Free", value: "soy_free" },
-    { label: "Egg-Free", value: "egg_free" },
     { label: "Shellfish-Free", value: "shellfish_free" },
     { label: "Fish-Free", value: "fish_free" },
     { label: "Sesame-Free", value: "sesame_free" },
@@ -123,7 +125,7 @@ const SignUpScreen = ({ navigation }) => {
           />
           <Text style={styles.dietLabel}>Dietary Restrictions</Text>
           <ButtonMultiselect
-            layout={ButtonLayout.GRID} // Choose from ButtonLayout enum: CAROUSEL, FULL_WIDTH, GRID
+            layout={ButtonLayout.GRID}
             buttons={buttons}
             selectedButtons={selectedDiet}
             onButtonSelected={(selected) =>
@@ -131,9 +133,9 @@ const SignUpScreen = ({ navigation }) => {
             }
           />
 
-          <Text style={styles.dietLabel}>Allerrgies</Text>
+          <Text style={styles.dietLabel}>Allergies</Text>
           <ButtonMultiselect
-            layout={ButtonLayout.GRID} // Choose from ButtonLayout enum: CAROUSEL, FULL_WIDTH, GRID
+            layout={ButtonLayout.GRID}
             buttons={allergiesList}
             selectedButtons={selectedAllergies}
             onButtonSelected={(selected) =>
