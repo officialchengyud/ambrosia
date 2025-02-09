@@ -73,7 +73,9 @@ const LoginScreen = ({ navigation }) => {
             {visible && (
               <Text style={styles.error}>Username or password incorrect!</Text>
             )}
-            <Button onPress={login}>Login</Button>
+            <Button style={styles.loginBtn} onPress={login}>
+              Login
+            </Button>
             <Button
               style={styles.input}
               appearance="ghost"
@@ -91,12 +93,15 @@ const LoginScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   input: {
-    marginTop: 10,
+    marginTop: 20,
   },
   error: {
     color: "red",
     marginTop: 10,
     marginBlock: 10,
+  },
+  loginBtn: {
+    marginTop: 20,
   },
 });
 

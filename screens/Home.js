@@ -49,12 +49,12 @@ const HomeScreen = ({ navigation }) => {
             style={styles.scanButton}
             onPress={() => navigation.navigate("Scan", { foodItem: null })}
           >
-            Scan Food
+            Scan Food Barcode
           </Button>
 
           <Button
-            style={styles.scanButton}
-            onPress={() => navigation.navigate("Scan1", { foodItem: null })}
+            style={styles.scanPhotoButton}
+            onPress={() => navigation.navigate("ScanPhoto", { foodItem: null })}
           >
             Scan Food Photo
           </Button>
@@ -96,6 +96,9 @@ const styles = StyleSheet.create({
   },
   scanButton: {
     marginTop: 20,
+    marginBottom: 20,
+  },
+  scanPhotoButton: {
     marginBottom: 20,
   },
   listItem: {

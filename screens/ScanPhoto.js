@@ -1,29 +1,32 @@
 // Add new imports at the top
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from "expo-file-system";
 import { TouchableOpacity, Image } from "react-native";
 import { useState, useRef } from "react";
 import { View, StyleSheet, SafeAreaView } from "react-native";
-import {
-  Button,
-  Spinner,
-  Text,
-} from "@ui-kitten/components";
+import { Button, Spinner, Text, ListItem } from "@ui-kitten/components";
 import { CameraView, useCameraPermissions } from "expo-camera";
+import { useNavigation } from "@react-navigation/native";
 import { useUser } from "../contexts/UserContext";
 import { addPastFood, getPastFood } from "../api/user";
 import OpenAI from "openai";
 import { ScrollView } from "react-native-gesture-handler";
 
 function generateRandom8DigitNumber() {
-    return Math.floor(10000000 + Math.random() * 90000000);
+  return Math.floor(10000000 + Math.random() * 90000000);
+}
+
+function snakeCaseToWords(snakeCaseString) {
+  return snakeCaseString
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (match) => match.toUpperCase());
 }
 
 // Add new state variables
-export default function ScanScreen1({ route }) {
+export default function ScanPhoto({ route }) {
+  const navigation = useNavigation();
   const [imagePreview, setImagePreview] = useState(null);
   const cameraRef = useRef(null);
   const { user, userData, refetchUserData } = useUser();
-  const [permission, requestPermission] = useCameraPermissions();
   const [isScanning, setIsScanning] = useState(true);
   const [productData, setProductData] = useState(null); // Store product data
   const [gptOutput, setGptOutput] = useState([]);
@@ -36,28 +39,28 @@ export default function ScanScreen1({ route }) {
           quality: 0.8,
           base64: false,
         });
-        
+
         // Read and convert image to base64
         const base64 = await FileSystem.readAsStringAsync(photo.uri, {
           encoding: FileSystem.EncodingType.Base64,
         });
-        
+
         const base64Image = `data:image/jpeg;base64,${base64}`;
         console.log(base64Image);
         setImagePreview(photo.uri);
         setIsScanning(false);
         openaiImageAnalysis(base64Image);
       } catch (error) {
-        console.error('Error taking picture:', error);
+        console.error("Error taking picture:", error);
       }
     }
   };
 
   const dietRestrictions = userData.dietary_restrictions;
-    const allergies = userData.allergies;
-    const openai = new OpenAI({
-      apiKey: `${process.env.EXPO_PUBLIC_OPENAI_API_KEY}`,
-    });
+  const allergies = userData.allergies;
+  const openai = new OpenAI({
+    apiKey: `${process.env.EXPO_PUBLIC_OPENAI_API_KEY}`,
+  });
 
   const openaiImageAnalysis = async (base64Image) => {
     try {
@@ -100,17 +103,17 @@ export default function ScanScreen1({ route }) {
             }
 
             If no filters are provided, return a general evaluation of the food item's health impact as outlined above.
-            `
+            `,
           },
           {
             role: "user",
             content: [
-              { 
+              {
                 type: "image_url",
-                image_url: { url: base64Image }
-              }
-            ]
-          }
+                image_url: { url: base64Image },
+              },
+            ],
+          },
         ],
         response_format: { type: "json_object" },
       });
@@ -125,6 +128,8 @@ export default function ScanScreen1({ route }) {
         product_name: output.product_name,
         openai_response: output,
       });
+      console.log(output.product_name);
+      setProductData({ product_name: output.product_name });
       refetchUserData();
       console.log(output);
     } catch (error) {
@@ -132,24 +137,56 @@ export default function ScanScreen1({ route }) {
     }
   };
 
+  const safe = () => <Text>✔️</Text>;
+  const notSafe = () => <Text>❌</Text>;
+
+  const ScanComplete = () => {
+    return (
+      <>
+        <Text style={styles.subHeading} category="h6">
+          Findings:
+        </Text>
+        {gptOutput.filters_analysis.map((filter) => {
+          return (
+            <ListItem
+              key={filter.filter}
+              style={styles.listItem}
+              title={`${snakeCaseToWords(filter.filter)}`}
+              description={`${filter.reason}`}
+              accessoryRight={filter.is_safe ? safe : notSafe}
+            />
+          );
+        })}
+        <Text style={styles.subHeading} category="h6">
+          Pros:
+        </Text>
+        <Text>{gptOutput.general_health_evaluation.pros.join(" ")}</Text>
+        <Text style={styles.subHeading} category="h6">
+          Cons:
+        </Text>
+        <Text>{gptOutput.general_health_evaluation.cons.join(" ")}</Text>
+      </>
+    );
+  };
+
+  const resetScan = () => {
+    setIsScanning(true);
+    setGptOutput([]);
+  };
+
   // Update your return statement
   return (
     <SafeAreaView style={{ height: "100%", backgroundColor: "white" }}>
-
       {isScanning && (
-        <CameraView
-          ref={cameraRef}
-          style={styles.camera}
-          facing="back"
-        >
-            <View style={styles.imageCaptureContainer}>
-              <TouchableOpacity
-                style={styles.captureButton}
-                onPress={takePicture}
-              >
-                <View style={styles.captureButtonInner} />
-              </TouchableOpacity>
-            </View>
+        <CameraView ref={cameraRef} style={styles.camera} facing="back">
+          <View style={styles.imageCaptureContainer}>
+            <TouchableOpacity
+              style={styles.captureButton}
+              onPress={takePicture}
+            >
+              <View style={styles.captureButtonInner} />
+            </TouchableOpacity>
+          </View>
         </CameraView>
       )}
 
@@ -158,14 +195,30 @@ export default function ScanScreen1({ route }) {
           {imagePreview && (
             <Image source={{ uri: imagePreview }} style={styles.imagePreview} />
           )}
-          
+          {gptOutput.length === 0 && <Spinner size="giant" />}
+
           {productData && (
             <Text category="h5">Product: {productData.product_name}</Text>
           )}
-          
-          {gptOutput.length === 0 && <Spinner size="giant" />}
-          
 
+          {gptOutput && gptOutput.filters_analysis && <ScanComplete />}
+
+          {!isScanning && (
+            <>
+              <Button style={styles.scanAgainBtn} onPress={resetScan}>
+                Scan Again
+              </Button>
+              <Button
+                style={styles.logoutBtn}
+                appearance="ghost"
+                onPress={() => {
+                  navigation.navigate("Home");
+                }}
+              >
+                Back
+              </Button>
+            </>
+          )}
         </ScrollView>
       )}
     </SafeAreaView>
@@ -175,8 +228,8 @@ export default function ScanScreen1({ route }) {
 // Add new styles
 const styles = StyleSheet.create({
   modeSelector: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
     padding: 10,
   },
   modeButton: {
@@ -184,33 +237,33 @@ const styles = StyleSheet.create({
   },
   imageCaptureContainer: {
     flex: 1,
-    backgroundColor: 'transparent',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
+    backgroundColor: "transparent",
+    justifyContent: "flex-end",
+    alignItems: "center",
     marginBottom: 20,
   },
   captureButton: {
     width: 70,
     height: 70,
     borderRadius: 35,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#fff",
+    justifyContent: "center",
+    alignItems: "center",
   },
   captureButtonInner: {
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#ff0000',
+    backgroundColor: "#ff0000",
   },
   imagePreview: {
     width: 200,
     height: 200,
     marginVertical: 20,
     borderRadius: 10,
-    alignSelf: 'center',
+    alignSelf: "center",
   },
   camera: {
-    height: "100%"
-  }
+    height: "100%",
+  },
 });
