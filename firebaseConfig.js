@@ -45,9 +45,25 @@ const logoutUser = async () => {
   }
 };
 
+// Function to register a new user
+const registerUser = async (email, password) => {
+  try {
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    console.log("User registered:", userCredential.user);
+    return userCredential.user;
+  } catch (error) {
+    console.error("Registration error:", error.message);
+    return null;
+  }
+};
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-export { db, auth, onAuthStateChanged, loginUser, logoutUser };
+export { db, auth, onAuthStateChanged, loginUser, logoutUser, registerUser };

@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { onAuthStateChanged, auth } from "../firebaseConfig";
+import { getUserFromDb } from "../api/user";
 
 // Create Context
 const UserContext = createContext();
@@ -7,6 +8,7 @@ const UserContext = createContext();
 // User Provider Component
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // Listen for auth state changes
@@ -18,8 +20,19 @@ export const UserProvider = ({ children }) => {
     return () => unsubscribe(); // Cleanup on unmount
   }, []);
 
+  useEffect(() => {
+    console.log("emaail", user);
+    if (user?.email) {
+      getUserFromDb(user.email).then((data) => {
+        setUserData(data);
+      });
+    }
+  }, [user]);
+
   return (
-    <UserContext.Provider value={{ user, loading, setUser }}>
+    <UserContext.Provider
+      value={{ user, loading, setUser, userData, setUserData }}
+    >
       {!loading && children}
     </UserContext.Provider>
   );

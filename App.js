@@ -8,6 +8,7 @@ import DetailsScreen from "./screens/Details";
 import ScanScreen from "./screens/Scan";
 import LoginScreen from "./screens/Login";
 import { UserProvider } from "./contexts/UserContext"; // Import the UserProvider
+import SignUpScreen from "./screens/SignUp";
 
 const { Navigator, Screen } = createStackNavigator();
 
@@ -20,6 +21,7 @@ export default () => (
           <Screen name="Home" component={HomeScreen} />
           <Screen name="Details" component={DetailsScreen} />
           <Screen name="Scan" component={ScanScreen} />
+          <Screen name="SignUp" component={SignUpScreen} />
         </Navigator>
       </NavigationContainer>
     </ApplicationProvider>

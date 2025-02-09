@@ -11,20 +11,18 @@ import { logoutUser } from "../firebaseConfig";
 import { useUser } from "../contexts/UserContext";
 
 const HomeScreen = ({ navigation }) => {
-  const { user, setUser } = useUser();
+  const { user, userData, setUser } = useUser();
 
   const navigateDetails = () => {
     navigation.navigate("Details");
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <TopNavigation title="MyApp" alignment="center" />
+    <SafeAreaView style={{ height: "100%", backgroundColor: "white" }}>
+      <TopNavigation title="Home" alignment="center" />
       <Divider />
-      <Layout
-        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-      >
-        {user && <Text>Welcome, {user.email}</Text>}
+      <Layout style={{ padding: 20 }}>
+        {userData && <Text category="h5">Welcome, {userData.name}</Text>}
         <Button onPress={navigateDetails}>OPEN DETAILS</Button>
         <Button onPress={() => navigation.navigate("Scan")}>Scan Food</Button>
         <Button
@@ -35,6 +33,8 @@ const HomeScreen = ({ navigation }) => {
         >
           Logout
         </Button>
+
+        <Text category="h3">History</Text>
       </Layout>
     </SafeAreaView>
   );

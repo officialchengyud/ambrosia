@@ -25,11 +25,12 @@ const LoginScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
+    console.log(user);
     if (user) {
       console.log("debug", user);
       navigation.navigate("Home");
     }
-  }, [user]);
+  }, []);
 
   const login = async () => {
     const user = await loginUser(username, password);
@@ -74,6 +75,13 @@ const LoginScreen = ({ navigation }) => {
           <View style={{ width: "90%" }}>
             {visible && <Text>Username or password error</Text>}
             <Button onPress={login}>Login</Button>
+            <Button
+              appearance="ghost"
+              status="primary"
+              onPress={() => navigation.navigate("SignUp")}
+            >
+              Create an account
+            </Button>
           </View>
         </Layout>
       </ScrollView>
