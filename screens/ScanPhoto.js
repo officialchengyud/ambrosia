@@ -160,11 +160,11 @@ export default function ScanPhoto({ route }) {
         <Text style={styles.subHeading} category="h6">
           Pros:
         </Text>
-        <Text>{gptOutput.general_health_evaluation.pros.join(" ")}</Text>
+        <Text>{gptOutput.general_health_evaluation.pros.join("\n")}</Text>
         <Text style={styles.subHeading} category="h6">
           Cons:
         </Text>
-        <Text>{gptOutput.general_health_evaluation.cons.join(" ")}</Text>
+        <Text>{gptOutput.general_health_evaluation.cons.join("\n")}</Text>
       </>
     );
   };
@@ -192,14 +192,16 @@ export default function ScanPhoto({ route }) {
 
       {!isScanning && (
         <ScrollView style={styles.container}>
+          {productData && (
+            <Text category="h5" style={styles.productTitle}>
+              Product: {productData.product_name}
+            </Text>
+          )}
+
           {imagePreview && (
             <Image source={{ uri: imagePreview }} style={styles.imagePreview} />
           )}
           {gptOutput.length === 0 && <Spinner size="giant" />}
-
-          {productData && (
-            <Text category="h5">Product: {productData.product_name}</Text>
-          )}
 
           {gptOutput && gptOutput.filters_analysis && <ScanComplete />}
 
@@ -227,6 +229,13 @@ export default function ScanPhoto({ route }) {
 
 // Add new styles
 const styles = StyleSheet.create({
+  productTitle: {
+    marginTop: 30,
+  },
+  container: {
+    paddingLeft: 10,
+    paddingRight: 10,
+  },
   modeSelector: {
     flexDirection: "row",
     justifyContent: "center",
@@ -265,5 +274,19 @@ const styles = StyleSheet.create({
   },
   camera: {
     height: "100%",
+  },
+  listItem: {
+    marginLeft: -15,
+  },
+  subHeading: {
+    marginTop: 15,
+  },
+  resultText: {
+    // color: "white",
+    fontSize: 16,
+    marginTop: 10,
+  },
+  scanAgainBtn: {
+    marginTop: 20,
   },
 });

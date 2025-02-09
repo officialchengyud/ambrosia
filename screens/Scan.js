@@ -240,11 +240,11 @@ export default function ScanScreen({ route }) {
         <Text style={styles.subHeading} category="h6">
           Pros:
         </Text>
-        <Text>{gptOutput.general_health_evaluation.pros.join(" ")}</Text>
+        <Text>{gptOutput.general_health_evaluation.pros.join("\n")}</Text>
         <Text style={styles.subHeading} category="h6">
           Cons:
         </Text>
-        <Text>{gptOutput.general_health_evaluation.cons.join(" ")}</Text>
+        <Text>{gptOutput.general_health_evaluation.cons.join("\n")}</Text>
       </>
     );
   };
@@ -274,23 +274,20 @@ export default function ScanScreen({ route }) {
           {gptOutput && gptOutput.filters_analysis && !isScanning && (
             <ScanComplete />
           )}
-
-          {!isScanning && (
-            <>
-              <Button style={styles.scanAgainBtn} onPress={resetScan}>
-                Scan Again
-              </Button>
-              <Button
-                style={styles.logoutBtn}
-                appearance="ghost"
-                onPress={() => {
-                  navigation.navigate("Home");
-                }}
-              >
-                Back
-              </Button>
-            </>
+          {!foodItem && (
+            <Button style={styles.scanAgainBtn} onPress={resetScan}>
+              Scan Again
+            </Button>
           )}
+          <Button
+            style={styles.logoutBtn}
+            appearance="ghost"
+            onPress={() => {
+              navigation.navigate("Home");
+            }}
+          >
+            Back
+          </Button>
         </ScrollView>
       )}
     </SafeAreaView>
