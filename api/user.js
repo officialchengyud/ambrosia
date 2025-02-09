@@ -3,7 +3,7 @@ import { doc, setDoc, getDoc } from "firebase/firestore";
 
 export const addUserToDB = async (userData, email) => {
   try {
-    const user = await setDoc(doc(db, "users", email.toLowerCase()), userData);
+    const user = await setDoc(doc(db, "users", email), userData);
     console.log("User data successfully saved!", user);
     return true;
   } catch (error) {
