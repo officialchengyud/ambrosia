@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { SafeAreaView, View } from "react-native";
+import { SafeAreaView, View, StyleSheet } from "react-native";
 import {
   Input,
   Button,
@@ -25,21 +25,17 @@ const LoginScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    console.log(user);
     if (user) {
-      console.log("debug", user);
       navigation.navigate("Home");
     }
   }, []);
 
   const login = async () => {
     const user = await loginUser(username, password);
-    console.log(user);
     if (user) {
       setUser(user);
       navigation.navigate("Home");
     } else {
-      console.log("unsuccessful");
       setVisible(true);
     }
   };
@@ -53,18 +49,19 @@ const LoginScreen = ({ navigation }) => {
         <Layout
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         >
-          <Text category="h2" style={{ marginBottom: 20 }}>
-            Welcome to Ambrosia,
+          <Text category="h4" style={{ marginBottom: 20 }}>
+            Welcome to Ambrosia
           </Text>
           <View style={{ width: "90%", marginTop: 20, marginBottom: 20 }}>
             <Input
+              style={styles.input}
               label="Username"
               placeholder="Enter your username"
               value={username}
               onChangeText={(username) => setUsername(username)}
             />
-
             <Input
+              style={styles.input}
               value={password}
               label="Password"
               placeholder="Enter your password"
@@ -73,9 +70,12 @@ const LoginScreen = ({ navigation }) => {
             />
           </View>
           <View style={{ width: "90%" }}>
-            {visible && <Text>Username or password error</Text>}
+            {visible && (
+              <Text style={styles.error}>Username or password incorrect!</Text>
+            )}
             <Button onPress={login}>Login</Button>
             <Button
+              style={styles.input}
               appearance="ghost"
               status="primary"
               onPress={() => navigation.navigate("SignUp")}
@@ -88,5 +88,16 @@ const LoginScreen = ({ navigation }) => {
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  input: {
+    marginTop: 10,
+  },
+  error: {
+    color: "red",
+    marginTop: 10,
+    marginBlock: 10,
+  },
+});
 
 export default LoginScreen;
