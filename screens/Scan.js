@@ -113,7 +113,7 @@ export default function ScanScreen() {
     apiKey: `${process.env.EXPO_PUBLIC_OPENAI_API_KEY}`,
   });
 
-  const openaiBarcodeAnalysis = async (productInfo, dietRestrictions) => {
+  const openaiBarcodeAnalysis = async (productInfo) => {
     try {
       const completion = await openai.chat.completions.create({
         model: "gpt-4o-mini",
