@@ -1,10 +1,15 @@
 import { useState, useRef } from "react";
 import { View, Text, StyleSheet, SafeAreaView } from "react-native";
-import { TopNavigation, Button } from "@ui-kitten/components";
+import { TopNavigation, Button, List, ListItem } from "@ui-kitten/components";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { useUser } from "../contexts/UserContext";
 import OpenAI from "openai";
 import { ScrollView } from "react-native-gesture-handler";
+
+const data = new Array(8).fill({
+  title: "Title for Item",
+  description: "Description for Item",
+});
 
 export default function ScanScreen() {
   const { user, userData, setUser } = useUser();
@@ -12,7 +17,7 @@ export default function ScanScreen() {
   const [prevBarcode, setPrevBarcode] = useState("");
   const [isScanning, setIsScanning] = useState(true);
   const [productData, setProductData] = useState(null); // Store product data
-  const [gptOutput, setGptOutput] = useState("");
+  const [gptOutput, setGptOutput] = useState([]);
 
   // Refs to prevent the function running twice because these update syncronously
   const prevBarcodeRef = useRef("");
@@ -34,6 +39,8 @@ export default function ScanScreen() {
       </View>
     );
   }
+
+  console.log(userData);
 
   const handleBarcodeScanned = async ({ data }) => {
     if (isProcessingRef.current || data === prevBarcodeRef.current) return;
@@ -107,7 +114,7 @@ export default function ScanScreen() {
     }
   };
 
-  const dietRestrictions = userData.diet;
+  const dietRestrictions = userData.dietary_restrictions;
   const allergies = userData.allergies;
   const openai = new OpenAI({
     apiKey: `${process.env.EXPO_PUBLIC_OPENAI_API_KEY}`,
@@ -163,7 +170,7 @@ export default function ScanScreen() {
         response_format: { type: "json_object" },
       });
       const output = completion.choices[0].message.content;
-      setGptOutput(output);
+      setGptOutput(JSON.parse(output));
       console.log(output);
       return output;
     } catch (error) {
@@ -171,6 +178,21 @@ export default function ScanScreen() {
     }
   };
 
+  const safe = () => <Text>✔️</Text>;
+  const notSafe = () => <Text>❌</Text>;
+
+  const renderItem = ({ item, index }) => {
+    console.log("Item", item);
+    return (
+      <ListItem
+        title={`${item.filter} ${index + 1}`}
+        description={`${item.reason} ${index + 1}`}
+        accessoryRight={item.is_safe ? safe : notSafe}
+      />
+    );
+  };
+
+  console.log("gpt", JSON.stringify(gptOutput));
   return (
     <SafeAreaView style={{ height: "100%", backgroundColor: "white" }}>
       {!isScanning && <TopNavigation title="Home" alignment="center" />}
@@ -185,7 +207,13 @@ export default function ScanScreen() {
           />
         )}
 
-        {!isScanning && gptOutput !== "" && <Text>{gptOutput.toString()}</Text>}
+        {gptOutput && gptOutput.filters_analysis && (
+          <List
+            style={styles.container}
+            data={gptOutput.filters_analysis}
+            renderItem={renderItem}
+          />
+        )}
 
         {!isScanning && (
           <Button onPress={() => setIsScanning(true)}>Scan Again</Button>
@@ -203,8 +231,8 @@ export default function ScanScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    // justifyContent: "center",
+    // alignItems: "center",
     // backgroundColor: "black",
   },
   camera: {

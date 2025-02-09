@@ -2,29 +2,27 @@ import { db } from "../firebaseConfig"; // Ensure db is initialized with getFire
 import { doc, setDoc, getDoc } from "firebase/firestore";
 
 export const addUserToDB = async (userData, email) => {
-    try {
-        const userRef = doc(db, "users", email.toLowerCase());
-    
-        // Structuring user data to match Firestore format
-        const userDataFormatted = {
-          name: userData.name || "",
-          age: userData.age || "",
-          gender: userData.gender?.toLowerCase() || "",
-          dietary_restrictions: userData.diet || "",
-          allergies: userData.allergies,
-          pantry: [
-        ],
-          past_foods: [
-          ]
-        };
-    
-        await setDoc(userRef, userDataFormatted);
-        console.log("User data successfully saved!");
-        return true;
-    } catch (error) {
-        console.error("Error saving user data:", error);
-        return false;
-    }
+  try {
+    const userRef = doc(db, "users", email.toLowerCase());
+
+    // Structuring user data to match Firestore format
+    const userDataFormatted = {
+      name: userData.name || "",
+      age: userData.age || "",
+      gender: userData.gender?.toLowerCase() || "",
+      dietary_restrictions: userData.diet || "",
+      allergies: userData.allergies,
+      pantry: [],
+      past_foods: [],
+    };
+
+    await setDoc(userRef, userDataFormatted);
+    console.log("User data successfully saved!");
+    return true;
+  } catch (error) {
+    console.error("Error saving user data:", error);
+    return false;
+  }
   // firestore()
   //   .collection("users")
   //   .doc(email)
@@ -45,45 +43,47 @@ export const addUserToDB = async (userData, email) => {
   //   });
 };
 
-
 export const getUserFromDB = async (email) => {
-    try {
-      const userRef = doc(db, "users", email.toLowerCase()); // Ensure email is lowercase
-      const userSnap = await getDoc(userRef); // Fetch the document
-  
-      if (userSnap.exists()) {
-        const userData = userSnap.data();
-  
-        // Ensure pantry follows list of maps structure
-        let pantry = [];
-        if (userData.pantry && typeof userData.pantry === "object") {
-          pantry = Object.entries(userData.pantry).map(([barcode_id, details]) => ({
+  try {
+    const userRef = doc(db, "users", email.toLowerCase()); // Ensure email is lowercase
+    const userSnap = await getDoc(userRef); // Fetch the document
+
+    if (userSnap.exists()) {
+      const userData = userSnap.data();
+
+      // Ensure pantry follows list of maps structure
+      let pantry = [];
+      if (userData.pantry && typeof userData.pantry === "object") {
+        pantry = Object.entries(userData.pantry).map(
+          ([barcode_id, details]) => ({
             barcode_id, // Key as barcode_id
             ...details, // Spread details containing food_name, openai_response, quantity, expiry_date
-          }));
-        }
-  
-        // Structuring output to match Firestore format
-        const formattedUserData = {
-          name: userData.name || "",
-          age: userData.age || "",
-          gender: userData.gender || "",
-          diet: userData.dietary_restrictions || "",
-          pantry: pantry || [], // Pantry is now a list of maps with barcode_id as key
-          past_foods: userData.past_foods || {},
-        };
-  
-        console.log("User Data:", formattedUserData);
-        return formattedUserData;
-      } else {
-        console.log("No such document!");
-        return null;
+          })
+        );
       }
-    } catch (error) {
-      console.error("Error retrieving user data:", error);
+
+      // Structuring output to match Firestore format
+      const formattedUserData = {
+        name: userData.name || "",
+        age: userData.age || "",
+        gender: userData.gender || "",
+        dietary_restrictions: userData.dietary_restrictions || "",
+        allergies: userData.allergies || "",
+        pantry: pantry || [], // Pantry is now a list of maps with barcode_id as key
+        past_foods: userData.past_foods || {},
+      };
+
+      console.log("User Data:", formattedUserData);
+      return formattedUserData;
+    } else {
+      console.log("No such document!");
       return null;
     }
-  };
+  } catch (error) {
+    console.error("Error retrieving user data:", error);
+    return null;
+  }
+};
 
 export const addFoodToPantry = async (email, foodItem) => {
   try {
