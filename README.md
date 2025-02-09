@@ -37,3 +37,5 @@ Working with Expo Camera: Overcame various challenges in handling barcode detect
 ## What's next for Ambrosia
 Pantry Management System: Users will be able to add scanned food items to a digital pantry, tracking expiry dates, dietary restrictions, and available ingredients. Recipe Recommendations: Based on the user’s pantry, dietary preferences, and expiring items, Ambrosia will suggest AI-generated meal ideas that minimize food waste. Enhanced Allergy & Health Warnings: Further improvements to filter analysis, highlighting potential health risks and suggesting better alternatives. Community-Driven Enhancements: Allowing users to contribute missing product details and dietary feedback to improve food data accuracy.
 
+## Credits
+Ambrosia was created within 24 hours by Cheng-Yu, Yash and Anushka for the 2025 HackNYU competition.
