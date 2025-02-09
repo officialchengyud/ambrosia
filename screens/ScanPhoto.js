@@ -206,7 +206,7 @@ export default function ScanPhoto({ route }) {
 
           {gptOutput && gptOutput.filters_analysis && <ScanComplete />}
 
-          {!isScanning && (
+          {gptOutput.length !== 0 && (
             <>
               <Button style={styles.scanAgainBtn} onPress={resetScan}>
                 Scan Again
