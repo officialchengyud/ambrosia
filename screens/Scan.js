@@ -298,9 +298,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingLeft: 10,
-    // justifyContent: "center",
-    // alignItems: "center",
-    // backgroundColor: "black",
+    paddingRight: 10,
   },
   listItem: {
     marginLeft: -15,

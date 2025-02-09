@@ -20,7 +20,6 @@ const SignUpScreen = ({ navigation }) => {
   const { user, setUserData } = useUser();
   const [name, setName] = React.useState("");
   const [gender, setGender] = React.useState("");
-  const [diet, setDiet] = React.useState("");
   const [age, setAge] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");

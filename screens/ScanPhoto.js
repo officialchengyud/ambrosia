@@ -123,6 +123,7 @@ export default function ScanPhoto({ route }) {
       setGptOutput(output);
       if (output.product_name === "None") {
         // Add error "produce in the image is not a food item"
+        return;
       }
       addPastFood(user.email, {
         barcodeId: generateRandom8DigitNumber(), // Store partial image ID
