@@ -77,7 +77,8 @@ export default function ScanPhoto({ route }) {
             portion of your output. for each of the person's dietary restrictions and allergies, consider the item's ingredients and nutritional information per
             recommended serving size to provide a positive or negative evaluation as to whether the item is safe to consume or not. Make sure to provide the 
             reason and highlight which specific ingredient is
-            the reason for said evaluation. After analysing the filters, list the general pros and cons of the food item as considered from a dietitian's 
+            the reason for said evaluation. There should be an output for each dietary restriction and allergy that you
+            have been provided. After analysing the filters, list the general pros and cons of the food item as considered from a dietitian's 
             perspective towards the impact of the food item on human health, making sure to keep each pro and con concise, relevant, impactful, significant, 
             and meaningful. If the image is not of a food item, set the product name to "None" and do not provide anything else in the output.
 
@@ -114,6 +115,7 @@ export default function ScanPhoto({ route }) {
           },
         ],
         response_format: { type: "json_object" },
+        temperature:0.5,
       });
 
       const output = JSON.parse(completion.choices[0].message.content);

@@ -169,7 +169,8 @@ export default function ScanScreen({ route }) {
           healthy they would be for regular consumption by a human. Furthermore, consider both the dietary restrictions and allergies of the person consuming
           this food item to determine whether it is suitable for their consumption. For each restriction or allergy they have, return a positive or negative 
           evaluation based on the food item's ingredients and nutritional information. Make sure to provide the reason for your evaluation and highlight which 
-          ingredient is reponsible for the evaluation. After analysing the filters, list the general pros and cons of the food item as you considered 
+          ingredient is reponsible for the evaluation. There should be an output for each dietary restriction and 
+          allergy that you have been provided. After analysing the filters, list the general pros and cons of the food item as you considered 
           from a dietitian's perspective, making sure to keep each pro and con concise, relevant, impactful, significant, and meaningful.
 
           ### Response Format:

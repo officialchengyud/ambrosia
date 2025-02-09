@@ -40,6 +40,8 @@ const LoginScreen = ({ navigation }) => {
     }
   };
 
+  const disabled = username === "" || password === "";
+
   return (
     <SafeAreaView style={{ height: "100%", backgroundColor: "white" }}>
       <TopNavigation title="Login" alignment="center" />
@@ -73,7 +75,7 @@ const LoginScreen = ({ navigation }) => {
             {visible && (
               <Text style={styles.error}>Username or password incorrect!</Text>
             )}
-            <Button style={styles.loginBtn} onPress={login}>
+            <Button disabled={disabled} style={styles.loginBtn} onPress={login}>
               Login
             </Button>
             <Button
