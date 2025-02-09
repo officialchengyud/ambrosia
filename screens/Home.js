@@ -47,7 +47,7 @@ const HomeScreen = ({ navigation }) => {
           {userData && <Text category="h4">Hello, {userData.name}!</Text>}
           <Button
             style={styles.scanButton}
-            onPress={() => navigation.navigate("Scan")}
+            onPress={() => navigation.navigate("Scan", { foodItem: null })}
           >
             Scan Food
           </Button>
