@@ -6,17 +6,22 @@ import { createStackNavigator } from "@react-navigation/stack";
 import HomeScreen from "./screens/Home";
 import DetailsScreen from "./screens/Details";
 import ScanScreen from "./screens/Scan";
+import LoginScreen from "./screens/Login";
+import { UserProvider } from "./contexts/UserContext"; // Import the UserProvider
 
 const { Navigator, Screen } = createStackNavigator();
 
 export default () => (
-  <ApplicationProvider {...eva} theme={eva.light}>
-    <NavigationContainer>
-      <Navigator screenOptions={{ headerShown: false }}>
-        <Screen name="Home" component={HomeScreen} />
-        <Screen name="Details" component={DetailsScreen} />
-        <Screen name="Scan" component={ScanScreen} />
-      </Navigator>
-    </NavigationContainer>
-  </ApplicationProvider>
+  <UserProvider>
+    <ApplicationProvider {...eva} theme={eva.light}>
+      <NavigationContainer>
+        <Navigator screenOptions={{ headerShown: false }}>
+          <Screen name="Login" component={LoginScreen} />
+          <Screen name="Home" component={HomeScreen} />
+          <Screen name="Details" component={DetailsScreen} />
+          <Screen name="Scan" component={ScanScreen} />
+        </Navigator>
+      </NavigationContainer>
+    </ApplicationProvider>
+  </UserProvider>
 );
