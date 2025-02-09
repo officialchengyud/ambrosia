@@ -1,7 +1,7 @@
 <div align="center">
   <h2>Abrosia</h2>
     <p align="center"><i>
-        Convert any website into readable, more fun text
+        AI-powered food scanner for instant nutrition insights and dietary compatibility checks. 
         </i><br />
         <br />
         <a href="https://devpost.com/software/ambrosia-ey1j3h">Devpost</a>
