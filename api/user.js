@@ -1,5 +1,5 @@
 import { db } from "../firebaseConfig"; // Ensure db is initialized with getFirestore()
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 
 export const addUserToDB = async (userData, email) => {
   try {
@@ -23,24 +23,6 @@ export const addUserToDB = async (userData, email) => {
     console.error("Error saving user data:", error);
     return false;
   }
-  // firestore()
-  //   .collection("users")
-  //   .doc(email)
-  //   .set({
-  //     name: userData.name,
-  //     age: userData.age || "",
-  //     gender: userData.gender.toLowerCase() || "",
-  //     dietary_restrictions: userData.diet || "",
-  //     pantry: {}, // Empty pantry at the start
-  //     past_foods: {}, // Empty past foods at the start
-  //     created: new Date(),
-  //   })
-  //   .then(() => {
-  //     console.log("User added successfully");
-  //   })
-  //   .catch((err) => {
-  //     console.log("Error adding user:", err);
-  //   });
 };
 
 export const getUserFromDB = async (email) => {
@@ -107,15 +89,56 @@ export const addFoodToPantry = async (email, foodItem) => {
 
 // Function to add past food item
 export const addPastFood = async (email, foodItem) => {
+  console.log(foodItem);
   try {
-    await firestore()
-      .collection("users")
-      .doc(email)
-      .update({
-        [`past_foods.${foodItem.barcodeID}`]: foodItem.openai_response,
-      });
-    console.log("Food item added to past foods:", foodItem.name);
+    const userRef = doc(db, "users", email.toLowerCase());
+
+    await updateDoc(userRef, {
+      [`past_foods.${foodItem.barcodeId}`]: {
+        ...foodItem.openai_response,
+        product_name: foodItem.product_name,
+      },
+    });
+
+    console.log("Food item added to past foods:", foodItem.product_name);
   } catch (error) {
-    console.log("Error adding food to past foods:", error);
+    console.error("Error adding food to past foods:", error);
+  }
+};
+
+// Function to get past food item
+export const getPastFood = async (email, barcodeId) => {
+  try {
+    const userRef = doc(db, "users", email.toLowerCase());
+    const userSnap = await getDoc(userRef);
+
+    if (userSnap.exists()) {
+      const pastFoods = userSnap.data().past_foods || {};
+      return pastFoods[barcodeId] || null;
+    } else {
+      console.log("No user data found.");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error retrieving past food:", error);
+    return null;
+  }
+};
+
+// Function to get all past food items
+export const getAllPastFoods = async (email) => {
+  try {
+    const userRef = doc(db, "users", email.toLowerCase());
+    const userSnap = await getDoc(userRef);
+
+    if (userSnap.exists()) {
+      return userSnap.data().past_foods || {};
+    } else {
+      console.log("No user data found.");
+      return {};
+    }
+  } catch (error) {
+    console.error("Error retrieving all past foods:", error);
+    return {};
   }
 };

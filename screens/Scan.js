@@ -10,6 +10,7 @@ import {
 } from "@ui-kitten/components";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { useUser } from "../contexts/UserContext";
+import { addPastFood, getPastFood } from "../api/user";
 import OpenAI from "openai";
 import { ScrollView } from "react-native-gesture-handler";
 
@@ -51,7 +52,19 @@ export default function ScanScreen() {
   console.log(userData);
 
   const handleBarcodeScanned = async ({ data }) => {
-    if (isProcessingRef.current || data === prevBarcodeRef.current) return;
+    const checkPastFood = await getPastFood(user.email, data);
+    if (checkPastFood) {
+      console.log(checkPastFood);
+      setProductData({ product_name: checkPastFood.product_name });
+      setIsScanning(false);
+      setGptOutput(checkPastFood);
+      set;
+      return;
+    }
+
+    if (isProcessingRef.current || data === prevBarcodeRef.current) {
+      return;
+    }
     isProcessingRef.current = true;
     prevBarcodeRef.current = data;
     setIsScanning(false);
@@ -179,6 +192,11 @@ export default function ScanScreen() {
       });
       const output = completion.choices[0].message.content;
       setGptOutput(JSON.parse(output));
+      addPastFood(user.email, {
+        barcodeId: productInfo.barcode,
+        product_name: productInfo.product_name,
+        openai_response: JSON.parse(output),
+      });
       console.log(output);
       return output;
     } catch (error) {
@@ -188,19 +206,6 @@ export default function ScanScreen() {
 
   const safe = () => <Text>✔️</Text>;
   const notSafe = () => <Text>❌</Text>;
-
-  const renderItem = ({ item, index }) => {
-    console.log("Item", item);
-    return (
-      <ListItem
-        title={`${snakeCaseToWords(item.filter)}`}
-        description={`${item.reason}`}
-        accessoryRight={item.is_safe ? safe : notSafe}
-      />
-    );
-  };
-
-  console.log("gpt", JSON.stringify(gptOutput));
 
   const ScanComplete = () => {
     return (
