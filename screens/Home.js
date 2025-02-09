@@ -61,10 +61,10 @@ const HomeScreen = ({ navigation }) => {
 
           <Text category="h4">History</Text>
           {userData &&
-            Object.values(userData.past_foods).map((pastFood) => {
+            Object.values(userData.past_foods).map((pastFood, index) => {
               return (
                 <ListItem
-                  key={pastFood.product_name}
+                  key={index}
                   title={`${pastFood.product_name} `}
                   style={styles.listItem}
                   onPress={() =>
